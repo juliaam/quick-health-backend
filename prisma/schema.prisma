@@ -30,7 +30,7 @@ model qr_code {
 
 model user {
   user_id              Int                    @id(map: "user_id_key") @default(autoincrement())
-  email                String                 @db.VarChar
+  email                String                 @unique @db.VarChar
   password             String                 @db.VarChar
   name                 String                 @db.VarChar
   critical_information critical_information[]

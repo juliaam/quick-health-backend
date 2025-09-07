@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -13,11 +18,16 @@ export class AuthService {
     private userService: UserService,
     private jwt: JwtService,
   ) {}
+
   async register(user: CreateUserDto) {
+    const userExists = await this.userService.findOne({ email: user.email });
+
+    if (userExists)
+      throw new ConflictException('Já existe um usuário com esse email!');
+
     const newUser = await this.userService.create(user);
 
     const payload = {
-      sub: newUser.user_id,
       email: newUser.email,
       name: newUser.name,
     };
@@ -31,14 +41,12 @@ export class AuthService {
   async login(user: LoginUserDto) {
     const findedUser = await this.userService.findOne({ email: user.email });
 
-    if (!findedUser)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    if (!findedUser) throw new NotFoundException('User not found');
 
     if (!comparePassword(user.password, findedUser.password))
-      throw new HttpException('Invalid password', HttpStatus.UNAUTHORIZED);
+      throw new UnauthorizedException('Invalid password');
 
     const payload = {
-      sub: findedUser.user_id,
       email: findedUser.email,
       name: findedUser.name,
     };

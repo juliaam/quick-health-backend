@@ -2,12 +2,8 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserModule } from 'src/modules/user/user.module';
-import { UserService } from 'src/modules/user/user.service';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaService } from 'src/database/prisma-service';
 import { jwtConstants } from './constans';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth.guard';
 
 @Module({
   imports: [
@@ -18,15 +14,8 @@ import { AuthGuard } from './auth.guard';
       signOptions: { expiresIn: '24h' },
     }),
   ],
-  providers: [
-    AuthService,
-    UserService,
-    PrismaService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-  ],
+  providers: [AuthService],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}
