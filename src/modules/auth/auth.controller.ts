@@ -3,6 +3,8 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { SkipAuth } from './auth.decorator';
+import { ResetPasswordDto } from '../email/dto/reset-password.dto';
+import { ForgotPasswordDto } from '../email/dto/forgot-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -26,5 +28,18 @@ export class AuthController {
       message: 'Token is valid',
       sucess: true,
     };
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() { email }: ForgotPasswordDto): Promise<void> {
+    return this.authService.sendResetPasswordLink(email);
+  }
+
+  @SkipAuth()
+  @Post('reset-password')
+  resetPassword(
+    @Body() { newPassword, token }: ResetPasswordDto,
+  ): Promise<void> {
+    return this.authService.resetPassword(token, newPassword);
   }
 }

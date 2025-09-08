@@ -6,13 +6,12 @@ import {
   CriticalInformationModule,
   UserModule,
 } from './modules/modules';
-import { UserService } from './modules/user/user.service';
-import { AuthService } from './modules/auth/auth.service';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/auth/auth.guard';
+import { EmailModule } from './modules/email/email.module';
 
 @Module({
-  imports: [UserModule, CriticalInformationModule, AuthModule],
+  imports: [UserModule, CriticalInformationModule, AuthModule, EmailModule],
   providers: [
     AppService,
     PrismaService,
