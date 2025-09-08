@@ -20,8 +20,8 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
-  @Get('refresh-token')
-  refreshToken() {
+  @Get('validate-token')
+  validateToken() {
     return {
       message: 'Token is valid',
       sucess: true,
