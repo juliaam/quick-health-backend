@@ -30,12 +30,12 @@ export class AuthController {
     };
   }
 
+  @SkipAuth()
   @Post('forgot-password')
   forgotPassword(@Body() { email }: ForgotPasswordDto): Promise<void> {
     return this.authService.sendResetPasswordLink(email);
   }
 
-  @SkipAuth()
   @Post('reset-password')
   resetPassword(
     @Body() { newPassword, token }: ResetPasswordDto,
