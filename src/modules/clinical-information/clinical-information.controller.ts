@@ -29,6 +29,15 @@ export class CriticalInformationController {
     );
   }
 
+  @Get(':id/:accessKey')
+  getByAccessKey(
+    @Param('accessKey') accessKey: string,
+    @Param('id') id: string,
+  ) {
+    console.log('bateu aqui');
+    return this.clinicalInformationService.getByAcessKey(+id, accessKey);
+  }
+
   @Get()
   findOne(@Req() request: any) {
     return this.clinicalInformationService.findOne(request.user.user_id);

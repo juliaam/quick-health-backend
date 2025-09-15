@@ -27,8 +27,8 @@ export class UserService {
     });
   }
 
-  findOne(findFirst: Prisma.userFindFirstArgs) {
-    return this.prisma.user.findFirst(findFirst);
+  async findOne(findFirst: Prisma.userFindFirstArgs) {
+    return await this.prisma.user.findFirst(findFirst);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

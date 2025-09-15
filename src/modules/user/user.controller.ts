@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Controller,
@@ -32,7 +33,7 @@ export class UserController {
   findOne(@Req() request: any) {
     return this.userService.findOne({
       where: { user_id: request.user.user_id },
-      include: { clinical_information: true },
+      include: { clinical_information: { include: { qr_code: true } } },
       omit: { password: true },
     });
   }
@@ -42,8 +43,8 @@ export class UserController {
     return this.userService.update(+id, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Delete()
+  remove(@Req() request: any) {
+    return this.userService.remove(request.user.user_id);
   }
 }

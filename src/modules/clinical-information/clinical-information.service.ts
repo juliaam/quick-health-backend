@@ -29,6 +29,27 @@ export class ClinicalInformationService {
     });
   }
 
+  async getByAcessKey(id: number, acess_key: string) {
+    const clinical_information =
+      await this.prisma.clinical_information.findFirst({
+        where: {
+          clinical_information_id: id,
+          qr_code: {
+            acess_key,
+          },
+        },
+      });
+
+    console.log(clinical_information, 'clinical');
+
+    if (!clinical_information)
+      throw new NotFoundException(
+        'Informação crítica não encontrada ou chave errada!',
+      );
+
+    return clinical_information;
+  }
+
   async findOne(id: number) {
     const clinical_information =
       await this.prisma.clinical_information.findFirst({
