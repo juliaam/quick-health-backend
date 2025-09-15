@@ -7,19 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model critical_information {
-  critical_information_id      Int       @id(map: "critical_information_id_key") @default(autoincrement())
+model clinical_information {
+  clinical_information_id      Int       @id(map: "clinical_information_id_key") @default(autoincrement())
+  name                         String?
   last_name                    String?
   gender_sex                   String?
   emergency_contact            String?
   blood_type                   String?
-  alergy                       String?
+  allergy                       String?
   medicines_used               String?
   illness                      String?
   surgery                      String?
   created_at                   DateTime? @db.Date
-  critical_information_user_id Int
-  user                         user      @relation(fields: [critical_information_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "critical_information_user_id")
+  clinical_information_user_id Int       @unique
+  user                         user      @relation(fields: [clinical_information_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "clinical_information_user_id")
 }
 
 model qr_code {
@@ -28,9 +29,9 @@ model qr_code {
 }
 
 model user {
-  user_id              Int                    @id(map: "user_id_key") @default(autoincrement())
-  email                String                 @unique @db.VarChar
-  password             String                 @db.VarChar
-  name                 String                 @db.VarChar
-  critical_information critical_information[]
+  user_id              Int                  @id(map: "user_id_key") @default(autoincrement())
+  email                String               @unique @db.VarChar
+  password             String               @db.VarChar
+  name                 String               @db.VarChar
+  clinical_information clinical_information?
 }

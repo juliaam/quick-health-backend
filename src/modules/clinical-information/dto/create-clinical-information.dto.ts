@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class UpdateCriticalInformationDto {
+export class CreateClinicalInformationDto {
   @IsString()
   name: string;
 
@@ -17,7 +17,7 @@ export class UpdateCriticalInformationDto {
   blood_type: string;
 
   @IsString()
-  alergy: string;
+  allergy: string;
 
   @IsString()
   medicines_used: string;

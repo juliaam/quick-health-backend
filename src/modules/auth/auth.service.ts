@@ -22,7 +22,9 @@ export class AuthService {
   ) {}
 
   async register(user: CreateUserDto) {
-    const userExists = await this.userService.findOne({ email: user.email });
+    const userExists = await this.userService.findOne({
+      where: { email: user.email },
+    });
 
     if (userExists)
       throw new ConflictException('Já existe um usuário com esse email!');
@@ -30,6 +32,7 @@ export class AuthService {
     const newUser = await this.userService.create(user);
 
     const payload = {
+      user_id: newUser.user_id,
       email: newUser.email,
       name: newUser.name,
     };
@@ -41,27 +44,30 @@ export class AuthService {
   }
 
   async login(user: LoginUserDto) {
-    const findedUser = await this.userService.findOne({ email: user.email });
+    const findedUser = await this.userService.findOne({
+      where: { email: user.email },
+      include: { clinical_information: true },
+    });
 
     if (!findedUser) throw new NotFoundException('User not found');
 
     if (!comparePassword(user.password, findedUser.password))
       throw new UnauthorizedException('Invalid password');
 
-    const payload = {
-      email: findedUser.email,
-      name: findedUser.name,
+    return {
+      payload: findedUser,
+      access_token: await this.jwt.signAsync(findedUser),
     };
-
-    return { payload, access_token: await this.jwt.signAsync(payload) };
   }
 
   public async sendResetPasswordLink(email: string): Promise<void> {
-    const user = await this.userService.findOne({ email });
+    const user = await this.userService.findOne({
+      where: { email },
+      omit: { password: true },
+    });
     if (!user) throw new NotFoundException('Usuário não encontrado');
 
-    const payload = { email };
-    const token = this.jwt.sign(payload, {
+    const token = this.jwt.sign(user, {
       secret: process.env.SECRET,
       expiresIn: '15m',
     });
@@ -78,7 +84,9 @@ export class AuthService {
         secret: process.env.SECRET,
       });
 
-      const user = await this.userService.findOne({ email: payload.email });
+      const user = await this.userService.findOne({
+        where: { email: payload.email },
+      });
       if (!user) throw new NotFoundException('Usuário não encontrado');
 
       const hashedPassword = await hashPassword(newPassword);

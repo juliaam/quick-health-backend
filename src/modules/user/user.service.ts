@@ -20,11 +20,15 @@ export class UserService {
   }
 
   findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      omit: {
+        password: true,
+      },
+    });
   }
 
-  findOne(where: Prisma.userWhereInput) {
-    return this.prisma.user.findFirst({ where });
+  findOne(findFirst: Prisma.userFindFirstArgs) {
+    return this.prisma.user.findFirst(findFirst);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
